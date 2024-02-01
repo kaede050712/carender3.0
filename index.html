@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+
+<meta charset='utf-8' />
+
+<script src="locales-all.global.js"></script>
+
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/index.global.min.js'></script>
+<script>id=0;</script>
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('calendar');
+
+  function Proc() {
+      var db = OpenMyDatabase();
+      CreateTable(db);
+    }
+
+  //データベース接続
+  function openDatabase(){
+    var dbsize = 1000;
+    var dbname = "calendardb";
+    var dbversion = 1.0;
+    var dbdescription = "Databese";
+    var db = window.openDatabase(dbname,dbversion,dbdescription,dbsize);
+    if (db == null){
+      alert("データベースが開けません");
+    }else{
+      alert("接続完了");
+    }
+    return db;
+  };
+
+  
+      
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    //list day weakをダス
+    headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
+      },
+    initialView: 'dayGridMonth',
+    //日本語にする
+    locale: "ja",
+   
+    navLinks: true, // can click day/week names to navigate views
+     //土日の色付け
+      businessHours: true, // display business hours
+      displayEventTime: true,//開始時間
+      editable: true,
+       // 日付をクリック、または範囲を選択したイベント
+    selectable: true,
+    //#infoのパラメータ値に数字を入れる
+    select: function (info) {
+        //今の表示
+
+        //lert("selected " + info.startStr + " to " + info.endStr);
+
+        // 入力ダイアログ
+        //イベント名を追加
+        const eventName = prompt("イベントを入力してください");
+        
+        //イベント名が追加されたらイベントを追加
+        if (eventName) {
+            // イベントの追加
+            calendar.addEvent({
+                title: eventName,
+                start: info.start,
+                end: info.end,
+                allDay: false,
+                
+                //実行確認のif文
+            });
+            
+        }
+        
+    },
+      //日付から日を消す
+    dayCellContent: function(arg){
+		return arg.date.getDate();
+	}
+  
+  });
+  calendar.render();
+ });
+
+
+
+</script>
+
+<style>
+
+  body {
+    margin: 40px 10px;
+    padding: 0;
+    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
+    font-size: 14px;
+  }
+
+  #calendar {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+</style>
+</head>
+<body>
+
+  <div id='calendar'></div>
+
+</body>
+</html>
